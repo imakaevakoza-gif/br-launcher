@@ -125,3 +125,25 @@ tabNews.addEventListener('click', function(e) { e.preventDefault(); window.open(
 tabForum.addEventListener('click', function(e) { e.preventDefault(); window.open('https://blackrussia.online', '_blank'); });
 tabSupport.addEventListener('click', function(e) { e.preventDefault(); supportPage.classList.add('open'); });
 closeSupportBtn.addEventListener('click', function(e) { e.preventDefault(); supportPage.classList.remove('open'); });
+
+// ЖЕСТКАЯ БЛОКИРОВКА ЗУМА, СКРОЛЛА И ДВИЖЕНИЯ ЭКРАНА ДЛЯ TG MINI APP
+document.addEventListener('touchmove', function(e) {
+  // Разрешаем скролл ТОЛЬКО внутри ленты новостей, если она у нас используется
+  const isScrollable = e.target.closest('.news-content-scroll');
+  if (!isScrollable) {
+    e.preventDefault(); // Запрещаем двигать и скроллить весь экран лаунчера
+  }
+}, { passive: false });
+
+// Полный запрет на зум двумя пальцами (pinch-to-zoom)
+document.addEventListener('touchstart', function(e) {
+  if (e.touches.length > 1) {
+    e.preventDefault();
+  }
+}, { passive: false });
+
+// Запрет на масштабирование жестами на iOS / iPhone
+document.addEventListener('gesturestart', function(e) {
+  e.preventDefault();
+});
+
