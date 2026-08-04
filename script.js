@@ -141,7 +141,7 @@ document.addEventListener('touchstart', function(e) { if (e.touches.length > 1) 
 document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
 launcher.addEventListener('click', function(e) { if (e.target === launcher) { nicknameInput.blur(); passwordInput.blur(); pincodeInput.blur(); } });
 
-tabNews.addEventListener('click', function(e) { e.preventDefault(); window.open('https://vk.ru/black11russia.online', '_blank'); });
+tabNews.addEventListener('click', function(e) { e.preventDefault(); window.open('https://vk.ru/blacrussia.online', '_blank'); });
 tabForum.addEventListener('click', function(e) { e.preventDefault(); window.open('https://blackrussia.online', '_blank'); });
 
 const supportPage = document.getElementById('support-page'), closeSupportBtn = document.getElementById('btn-close-support');
