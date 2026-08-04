@@ -1,3 +1,19 @@
+const launcher = document.getElementById('launcher');
+
+// АВТОМАТИЧЕСКИЙ МАСШТАБ ПОД РАЗМЕР ЭКРАНА СМАРТФОНА (ЗАЩИТА ОТ КЛАВИАТУРЫ)
+const initialHeight = window.innerHeight; // Запоминаем чистую высоту до вылета клавы
+function resizeLauncher() {
+  if (!launcher) return;
+  // Рассчитываем идеальный коэффициент сжатия под высоту смартфона
+  const scale = Math.min(window.innerWidth / 380, initialHeight / 824, 1);
+  document.documentElement.style.setProperty('--app-scale', scale);
+}
+window.addEventListener('resize', () => {
+  // Если высота уменьшилась (вылетела клава) — НЕ меняем масштаб лаунчера, спасая от лагов
+  if (window.innerHeight >= initialHeight - 100) { resizeLauncher(); }
+});
+resizeLauncher();
+
 document.addEventListener("DOMContentLoaded", () => {
   const preloader = document.getElementById('app-preloader'), bar = preloader.querySelector('.preloader-bar'), txt = preloader.querySelector('.preloader-text');
   let preProgress = 0;
@@ -20,22 +36,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const loginBtn = document.getElementById('btn-login'), tabForum = document.getElementById('btn-tab-forum'), tabNews = document.getElementById('btn-tab-news'), tabSupport = document.getElementById('btn-tab-support');
 const nicknameInput = document.getElementById('input-nickname'), passwordInput = document.getElementById('input-password'), pincodeInput = document.getElementById('input-pincode'), checkboxToggle = document.getElementById('checkbox-pincode-toggle');
-const launcher = document.getElementById('launcher'), customAlert = document.getElementById('custom-alert'), alertText = document.getElementById('alert-text');
+const customAlert = document.getElementById('custom-alert'), alertText = document.getElementById('alert-text');
 const loadingPage = document.getElementById('loading-page'), progressBar = document.getElementById('bar'), loadStatus = document.getElementById('load-status'), loadPercent = document.getElementById('load-percent');
-const supportPage = document.getElementById('support-page'), closeSupportBtn = document.getElementById('btn-close-support');
-
-if (window.innerWidth > 768) {
-  document.addEventListener('mousemove', (e) => {
-    const ax = -(window.innerWidth / 2 - e.pageX) / 45, ay = (window.innerHeight / 2 - e.pageY) / 45;
-    if (launcher) launcher.style.transform = `rotateY(${ax}deg) rotateX(${ay}deg)`;
-  });
-} else {
-  document.addEventListener('touchmove', (e) => {
-    const touch = e.touches, ax = -(window.innerWidth / 2 - touch.pageX) / 25, ay = (window.innerHeight / 2 - touch.pageY) / 25;
-    if (launcher) launcher.style.transform = `rotateY(${ax}deg) rotateX(${ay}deg)`;
-  }, { passive: true });
-  document.addEventListener('touchend', () => { if (launcher) launcher.style.transform = 'rotateY(0deg) rotateX(0deg)'; });
-}
 
 function showGameAlert(text) { alertText.innerText = text; customAlert.classList.add('show'); setTimeout(() => { customAlert.classList.remove('show'); }, 3000); }
 
@@ -110,40 +112,15 @@ loginBtn.addEventListener('click', function(e) {
   startGameLoading();
 });
 
-// Закрытие клавиатуры при тапе на свободную зону экрана
-launcher.addEventListener('click', function(e) {
-  // Если кликнули по самому фону, а не по полю ввода
-  if (e.target === launcher) {
-    nicknameInput.blur();
-    passwordInput.blur();
-    pincodeInput.blur();
-  }
-});
+document.addEventListener('touchmove', function(e) { if (!e.target.closest('.news-content-scroll') && !e.target.closest('.support-content')) e.preventDefault(); }, { passive: false });
+document.addEventListener('touchstart', function(e) { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
 
-// ОБНОВЛЕННЫЕ КНОПКИ МЕНЮ
-tabNews.addEventListener('click', function(e) { e.preventDefault(); window.open('https://vk.ru/blackrussia.online', '_blank'); });
+launcher.addEventListener('click', function(e) { if (e.target === launcher) { nicknameInput.blur(); passwordInput.blur(); pincodeInput.blur(); } });
+
+tabNews.addEventListener('click', function(e) { e.preventDefault(); window.open('https://vk.ru', '_blank'); });
 tabForum.addEventListener('click', function(e) { e.preventDefault(); window.open('https://blackrussia.online', '_blank'); });
+
+const supportPage = document.getElementById('support-page'), closeSupportBtn = document.getElementById('btn-close-support');
 tabSupport.addEventListener('click', function(e) { e.preventDefault(); supportPage.classList.add('open'); });
 closeSupportBtn.addEventListener('click', function(e) { e.preventDefault(); supportPage.classList.remove('open'); });
-
-// ЖЕСТКАЯ БЛОКИРОВКА ЗУМА, СКРОЛЛА И ДВИЖЕНИЯ ЭКРАНА ДЛЯ TG MINI APP
-document.addEventListener('touchmove', function(e) {
-  // Разрешаем скролл ТОЛЬКО внутри ленты новостей, если она у нас используется
-  const isScrollable = e.target.closest('.news-content-scroll');
-  if (!isScrollable) {
-    e.preventDefault(); // Запрещаем двигать и скроллить весь экран лаунчера
-  }
-}, { passive: false });
-
-// Полный запрет на зум двумя пальцами (pinch-to-zoom)
-document.addEventListener('touchstart', function(e) {
-  if (e.touches.length > 1) {
-    e.preventDefault();
-  }
-}, { passive: false });
-
-// Запрет на масштабирование жестами на iOS / iPhone
-document.addEventListener('gesturestart', function(e) {
-  e.preventDefault();
-});
-
