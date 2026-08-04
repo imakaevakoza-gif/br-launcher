@@ -110,6 +110,16 @@ loginBtn.addEventListener('click', function(e) {
   startGameLoading();
 });
 
+// Закрытие клавиатуры при тапе на свободную зону экрана
+launcher.addEventListener('click', function(e) {
+  // Если кликнули по самому фону, а не по полю ввода
+  if (e.target === launcher) {
+    nicknameInput.blur();
+    passwordInput.blur();
+    pincodeInput.blur();
+  }
+});
+
 // ОБНОВЛЕННЫЕ КНОПКИ МЕНЮ
 tabNews.addEventListener('click', function(e) { e.preventDefault(); window.open('https://vk.ru/blackrussia.online', '_blank'); });
 tabForum.addEventListener('click', function(e) { e.preventDefault(); window.open('https://blackrussia.online', '_blank'); });
