@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Black Russia Launcher Ultimate</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="launcher" class="launcher-container">
+    <!-- СТАРТОВЫЙ ПРЕЛОАДЕР (ПОЧИНЕН) -->
+    <div id="app-preloader" class="preloader-screen">
+      <div class="preloader-logo">BLACK <span class="red-text">RUSSIA</span></div>
+      <div class="preloader-bar-container"><div class="preloader-bar"></div></div>
+      <div class="preloader-text">Загрузка компонентов Mini App...</div>
+    </div>
+    <!-- Экран загрузки ИГРЫ -->
+    <div id="loading-page" class="loading-screen">
+      <div class="logo">BLACK <span class="red-text">RUSSIA</span></div>
+      <div class="progress-container"><div id="bar" class="progress-bar"></div></div>
+      <div id="load-status" class="loading-text">Инициализация клиента...</div>
+      <div id="load-percent" class="loading-percentage">0%</div>
+    </div>
+    <div id="custom-alert" class="game-alert">
+      <div class="game-alert-title">Система</div>
+      <div id="alert-text">Ошибка авторизации</div>
+    </div>
+    <input type="text" id="input-nickname" class="input-field" autocomplete="off">
+    <input type="password" id="input-password" class="input-field">
+    <button id="btn-eye-toggle" class="eye-toggle-btn"></button>
+    <div class="pincode-toggle-wrapper">
+      <label class="custom-checkbox-container">
+        <input type="checkbox" id="checkbox-pincode-toggle">
+        <span class="checkmark"></span>
+        <span class="checkbox-label">У меня установлен пин-код</span>
+      </label>
+    </div>
+    <input type="text" id="input-pincode" class="input-field-pincode" maxlength="4" autocomplete="off">
+    <button id="btn-login" class="btn-login"></button>
+    <button id="btn-tab-login" class="bottom-btn"></button>
+    <button id="btn-tab-news" class="bottom-btn"></button>
+    <button id="btn-tab-forum" class="bottom-btn"></button>
+    <button id="btn-tab-support" class="bottom-btn"></button>
+    <!-- ЛЕНТА НОВОСТЕЙ -->
+    <div id="news-page" class="news-modal">
+      <div class="news-header">
+        <div class="news-title">Новости проекта</div>
+        <button id="btn-close-news" class="news-close-btn">&times;</button>
+      </div>
+      <div class="news-content-scroll">
+        <div class="news-card">
+          <div class="news-badge update">Обновление</div>
+          <div class="news-card-title">Глобальное обновление уже на серверах!</div>
+          <div class="news-card-text">Мы полностью переработали движок и добавили новые автомобили. Заходи и зацени прямо сейчас!</div>
+        </div>
+      </div>
+    </div>
+    <!-- ОКНО ТЕХПОДДЕРЖКИ С ТВОЕЙ ПОДРОБНОЙ ИНСТРУКЦИЕЙ -->
+    <div id="support-page" class="support-modal">
+      <div class="support-header">
+        <div class="support-title">Тех. Поддержка</div>
+        <button id="btn-close-support" class="support-close-btn">&times;</button>
+      </div>
+      <div class="support-content">
+        <div class="support-notice">
+          <div class="notice-icon">⚠️</div>
+          <div class="notice-text">
+            <strong>Инструкция для связи:</strong><br>
+            Чтобы ваш запрос рассмотрели, выполните следующие шаги:<br>
+            1. Перейдите по ссылке нужного администратора.<br>
+            2. Нажмите на <span class="highlight-text">трёхточие (...)</span> рядом с кнопкой звонка.<br>
+            3. В меню выберите пункт <span class="highlight-text">«Задать вопрос»</span>.<br>
+            4. В тексте вопроса напишите: <span class="highlight-text">«Я с поддержки бота»</span> и опишите суть проблемы.
+          </div>
+        </div>
+        <div class="support-list">
+          <div class="support-card">
+            <div class="support-info">
+              <span class="support-name">Sander_Kligan</span>
+              <span class="support-rank">Спец. Администратор</span>
+            </div>
+            <button class="support-link-btn" onclick="window.open('https://vk.ru/SanderBr', '_blank')">Связаться</button>
+          </div>
+          <div class="support-card">
+            <div class="support-info">
+              <span class="support-name">Bahido_Tadakatsu</span>
+              <span class="support-rank">Спец. Техник</span>
+            </div>
+            <button class="support-link-btn" onclick="window.open('https://vk.ru/tadanuki', '_blank')">Связаться</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
